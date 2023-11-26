@@ -76,16 +76,14 @@ def get_birthdays_per_week(users) -> str:
                 weekday = get_weekday(birthday_weekday)
                 grouped_birthdays[weekday].append(name)
         except InvalidUserArgs:
-            print("User must have required \"name\" and \"birthday\" keys")
+            print("Not found required \"name\" and \"birthday\" keys.")
         except InvalidUserDateType:
-            print("Birthday value must be a datetime type")
+            print("Birthday value must be a datetime type.")
         except Exception as err:
             print(err)
     
     output = ""
-    if len(grouped_birthdays):
-        output += "\n"
-        for weekday, users_list in grouped_birthdays.items():
-            output += "{}: {}".format(weekday, ", ".join(users_list)) + "\n"
+    for weekday, users_list in grouped_birthdays.items():
+        output += "{}: {}".format(weekday, ", ".join(users_list)) + "\n"
     
     return output

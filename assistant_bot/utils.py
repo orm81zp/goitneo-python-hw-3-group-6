@@ -1,27 +1,27 @@
+import pickle
+from pathlib import Path
 
-from address_book import Record, AddressBook
+from .address_book import Record, AddressBook
 
 class InputBotExseption(Exception):
     pass
 
-COMMANDS_INFO = {
-    "add": "used to add a phone number: \"add [username] [phone]\"",
-    "remove": "used to remove a phone number: \"remove [username] [phone]\"",
-    "change": "used to change a contact phone number: \"change [username] [phone]\"",
-    "phone": "used to display a phone number: \"phone [username]\"",
-    "all": "used to display all saved contacts: \"all\"",
-    "add-birthday": "used to add a birthday: \"add-birthday [username] [birthday]\"",
-    "show-birthday": "used to display a birthday: \"show-birthday [username]\"",
-    "birthdays": "used to display birthdays that will happen in the next week: \"birthdays\"",
-    "delete-contact": "used to delete a contact: \"delete-contact [username]\"",
-    "hello": "used to display a welcome message: \"hello\"",
-    "close or exit": "used to terminate the program: \"exit\"",
-    "help": "used to display commands the Bot commands: \"help\"",
-}
 
-def init_address_book():
-    address_book = AddressBook()
-    return address_book
+DUMP_FILE = None
+DUMP_FILE_NAME = "assistant_bot_data.bin"
+
+
+def init_address_book(dump_file_path: Path):
+    global DUMP_FILE
+    DUMP_FILE = dump_file_path
+
+    if dump_file_path and dump_file_path.exists():
+        with open(dump_file_path, "rb") as fh:
+            address_book = pickle.load(fh)
+            return address_book
+    else:
+        address_book = AddressBook()
+        return address_book
 
 def input_error(error):
     """Decorator takes an error message and return the error"""
@@ -37,11 +37,34 @@ def input_error(error):
     return error_handler
 
 def show_help():
+    COMMANDS = {
+        "add": "used to add a phone number: \"add [username] [phone]\"",
+        "remove": "used to remove a phone number: \"remove [username] [phone]\"",
+        "change": "used to change a phone number: \"change [username] [phone]\"",
+        "phone": "used to display a phone number(s): \"phone [username]\"",
+        "all": "used to display all contacts: \"all\"",
+        "add-birthday": "used to add a birthday: \"add-birthday [username] [birthday]\"",
+        "show-birthday": "used to display a birthday: \"show-birthday [username]\"",
+        "birthdays": "used to display birthdays that will happen in the next week: \"birthdays\"",
+        "remove-contact": "used to remove a contact: \"remove-contact [username]\"",
+        "hello": "used to display a welcome message: \"hello\"",
+        "close or exit": "used to close the program: \"exit\"",
+        "help": "used to display available commands: \"help\"",
+    }
+
     output = "Please, use only the following commands:\n"
-    for command in COMMANDS_INFO:
-        output += "{:<20} - {:<30}\n".format(command, COMMANDS_INFO[command])
+    for command in COMMANDS:
+        output += "{:<20} - {:<30}\n".format(command, COMMANDS[command])
     output += "\n"
     return output
+
+def terminate(book: AddressBook):
+    global DUMP_FILE
+    if book.has_data() and DUMP_FILE:
+        with open(DUMP_FILE, "wb") as fh:
+            pickle.dump(book, fh)
+    
+    return "Good bye!"
 
 def show_hello():
     return "How can I help you?"
@@ -55,7 +78,6 @@ def parse_input(user_input):
     return cmd, *args
 
 def is_yes_prompt(user_input):
-    """Checks if the value entered as yes or y"""
     if not user_input:
         raise InputBotExseption
 
@@ -113,9 +135,9 @@ def show_birthday(args, book: AddressBook):
     else:
         return "Contact not found."
 
-def show_birthdays(book: AddressBook):
-    birthdays = book.get_birthdays_per_week()
-    return birthdays if birthdays else "There are no birthdays to display."
+def birthdays(book: AddressBook):
+    birthdays = book.birthdays()
+    return birthdays if birthdays else "There are no data to display."
 
 @input_error("Give me name and phone please.")
 def add_phone(args, book: AddressBook):
@@ -150,16 +172,3 @@ def remove_contact(args, book: AddressBook):
     else:
         return "Contact not found."
 
-
-# COMMANDS = {
-#     "hello": show_hello,
-#     "add": add_phone,
-#     "change": change_phone,
-#     "phone": show_phone,
-#     "all": show_all,
-#     "help": show_help,
-#     "close or exit": "used to terminate the program",
-# }
-
-# def command_handler(command, args, address_book):
-#     pass

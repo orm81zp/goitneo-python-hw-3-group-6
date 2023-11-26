@@ -1,146 +1,174 @@
-Homework consists of 2 tasks
-
-# Task 1. Refine the helper console Bot and add error handling.
+# It's time to combine our previous homework into one.
 
 ## Description
 
-File name `bot.py`. The file contains a main function and be called dirrectly from the console `python bot.py`.
+File name `main.py`. The file runs The Assistant Bot.
+The project contains the **assistant_bot** module, which exports the `run_bot` function.
 
-## What was done
-
-Added improved **input_error** decorator for following methods: `change_contact`, `add_contact`, `show_phone`. It takes an error message as an argument and return one as a message if an exception was caught.
+## How to run
 
 Examples of the use:
 
 ```
-@input_error("Give me name and phone please.")
-def change_contact(args, contacts):
+from assistant_bot import run_bot
+
+def main():
+    run_bot()
+
+
+if __name__ == "__main__":
+    main()
 ```
 
-_function expects two arguments: **name** and **phone number**_
+or directly from the terminal `python main.py`
 
-or
-
-```
-@input_error("Give me name please.")
-def show_phone(args, contacts):
-```
-
-_function expects only one argument: **name**_
-
-## How to run
-
-Example of the Bot call:
-
-```
-python bot.py
-```
-
-In order to terminate the Bot use "close" or "exit" command.
+In order to close the program use `close` or `exit` command.
 
 ```
 Enter a command: close
 Good bye!
 ```
 
-## Modules
-
-The folder `bot_utils` contains all the important utilities for the Bot to work.
-
-# Task 2. Develop a system for managing the address book.
-
-## Description
-
-File name `address_book.py`. The file contains a main function with testing implementation and be called dirrectly from the console `python address_book.py`.
-
-## How to run
-
-Example of the use manually:
-
-**Creating a new address book**
+Below is a list of available commands with examples of usage:
 
 ```
-book = AddressBook()
+add                 used to add a phone number: "add [username] [phone]"
+remove              used to remove a phone number: "remove [username] [phone]"
+change              used to change a phone number: "change [username] [phone]"
+phone               used to display a phone number(s): "phone [username]"
+all                 used to display all contacts: "all"
+add-birthday        used to add a birthday: "add-birthday [username] [birthday]"
+show-birthday       used to display a birthday: "show-birthday [username]"
+birthdays           used to display birthdays that will happen in the next week: "birthdays"
+remove-contact      used to remove a contact: "remove-contact [username]"
+hello               used to display a welcome message: "hello"
+close or exit       used to close the program: "exit"
+help                used to display available commands: "help"
 ```
 
-**Creating a record for John**
+### add
+
+Used to add a phone number: `add [username] [phone]`
 
 ```
-john_record = Record("John")
-john_record.add_phone("1234567890")
-john_record.add_phone("5555555555")
+Enter a command: add John 0970000001
+Phone number added.
+Enter a command: add John 0630000001
+Phone number added.
+Enter a command: add Erik 0660000001
+Phone number added.
 ```
 
-**Adding John to the address book**
+### add-birthday
+
+Used to add a birthday: `add-birthday [username] [birthday]`
 
 ```
-book.add_record(john_record)
+Enter a command: add-birthday John 28.11.2001
+Birthday added.
 ```
 
-**Output of all entries in the address book**
+### show-birthday
+
+Used to display a birthday: `show-birthday [username]`
 
 ```
-for name, record in book.data.items():
-    print(record)
+Enter a command: show-birthday John
+28.11.2001
 ```
 
-**Find and edit John's phone**
+### remove-contact
+
+Used to remove a contact: `remove-contact [username]`
+Considering that this is a not safe command, you need to confirm your intention with "yes" or "y".
 
 ```
-john = book.find("John")
-john.edit_phone("1234567890", "1112223333")
-
-print(john)  # Output: Contact name: John, phones: 1112223333; 5555555555
+Enter a command: remove-contact Erik
+Are you sure you want to delete the contact (y or n)? y
+Contact deleted
 ```
 
-**Search for a specific phone in a John record**
+### all
+
+Used to display all contacts: `all`
 
 ```
-found_phone = john.find_phone("5555555555")
-print(f"{john.name}: {found_phone}")  # Output: 5555555555
-```
-
-**Deleting Jane's record**
+Enter a command: all
+Contact name: John, phones: 0970000001; 0630000001
 
 ```
-book.delete("Jane")
-```
 
-## Modules
+### change
 
-No extra modules.
-
-# Extra files in the project not related to the current Homework
-
-## get_birthdays_per_week.py
-
-The file contains a function `get_birthdays_per_week` that's called with a list of dictionaries. Each dictionary must have such required keys as `name` and `birthday`.
-
-Example of a dictionary:
+Used to change a phone number: `change [username] [phone]`
 
 ```
-{"name": "Bill Gates", "birthday": datetime(1955, 11, 11)}
+Enter a command: change John 0630000001 0730000001
+Phone number updated.
+
 ```
 
-The function `get_birthdays_per_week`` outputs the names of birthday people in the following format:
+### phone
+
+Used to display a phone number: `phone [username]`
+
+```
+Enter a command: phone John
+0970000001, 0730000001
+```
+
+### remove
+
+Used to remove a phone number: `remove [username] [phone]`
+
+```
+Enter a command: remove John 0970000001
+Phone number deleted.
+Enter a command: phone John
+0730000001
+
+```
+
+### birthdays
+
+Used to display birthdays that will happen in the next week: `birthdays`
+
+The example of the output:
 
 ```
 Monday: Bill Gates, Jill Valentine
 Friday: Kim Kardashian, Jan Koum
-```
-
-### How to run
-
-Example of the function call:
 
 ```
-users = [
-    {"name": "Bill Gates", "birthday": datetime(1955, 11, 11)},
-    {"name": "Jill Valentine", "birthday": datetime(1955, 11, 12)},
-    {"name": "Kim Kardashian", "birthday": datetime(1955, 11, 10)},
-    {"name": "Jan Koum", "birthday": datetime(1955, 11, 10)},
-]
 
-get_birthdays_per_week(users)
+Let's assume that today is 26.11.2023 (Sunday) and run the `birthdays` command. Just a small reminder that John's birthday is 28.11.2001.
 
 ```
+Enter a command: birthdays
+Tuesday: John
+```
+
+## Modules
+
+The folder `assistant_bot` contains all the important utilities for the Bot to work.
+
+# Additional functionality of saving and restoring the contacts.
+
+## Description
+
+The project contains the **assistant_bot** module, which exports the `run_bot` function.
+The function can take an optional **dump_file_path** parameter that specifies the path to a dump file to save data when the program closes.
+If `dump_file_path` is not specified, the `assistant_bot_data.bin` default file will be used alongside the main.py file.
+
+### Close the programm
+
+use `close` or `exit` to close the program.
+
+```
+Enter a command: exit
+Good bye!
+```
+
+if there are any contacts already available then a dump file will be created alongside the main.py file after closing the program. The dump file is used to recover contacts.
+
+To empty your contacts just delete the dump file.
