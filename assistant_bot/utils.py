@@ -40,7 +40,7 @@ def show_help():
     COMMANDS = {
         "add": "used to add a phone number: \"add [username] [phone]\"",
         "remove": "used to remove a phone number: \"remove [username] [phone]\"",
-        "change": "used to change a phone number: \"change [username] [phone]\"",
+        "change": "used to change a phone number: \"change [username] [old phone] [new phone]\"",
         "phone": "used to display a phone number(s): \"phone [username]\"",
         "all": "used to display all contacts: \"all\"",
         "add-birthday": "used to add a birthday: \"add-birthday [username] [birthday]\"",
